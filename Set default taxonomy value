@@ -1,0 +1,17 @@
+ // Set default network item to be Participant
+function set_default_role($post)
+{
+    // Return if not in create page or post type isn't Network
+    if (!strpos($_SERVER['REQUEST_URI'], 'wp-admin/post-new.php') || $post->post_type !== "network") :
+        return;
+    endif;
+
+    $roles = get_terms([
+        'taxonomy' => 'role',
+        'hide_empty' => false
+    ]);
+
+    wp_set_post_terms($post->ID, $roles[0]->term_id, 'role');
+}
+
+add_action("new_to_auto-draft", [$this, "set_default_role"]);
