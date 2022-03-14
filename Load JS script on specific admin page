@@ -1,0 +1,14 @@
+// Load JS scripts related to a post type
+function load_scripts($hook)
+{
+    global $post;
+
+    // Only load script within the create & edit page of current post type
+    if (isset($post) && $post->post_type === 'network') :
+        if ($hook == 'post.php' || $hook == 'post-new.php') :
+            wp_enqueue_script('admin-network-js', get_stylesheet_directory_uri() . '/assets/js/admin/network.js');
+        endif;
+    endif;
+}
+
+add_action("admin_enqueue_scripts", [$this, "load_scripts"], 10, 1);
