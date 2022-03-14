@@ -1,0 +1,11 @@
+jQuery(function() {
+
+    // if exisiting post -> hide Language taxonomy if current item isn't an Expert
+    if(this.location.pathname == '/wp-admin/post.php'){
+        var current = document.querySelector('#rolechecklist input:checked').parentElement.textContent.replace(/\s/g, "");
+        
+        if(current !== "Expert"){
+            document.querySelector('#expert_languagediv').style.display = 'none';
+        }
+    }
+})
