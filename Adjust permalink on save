@@ -10,3 +10,5 @@ function adjust_permalink($post_link, $post)
 
     return $post_link;
 }
+
+add_filter("post_type_link", [$this, "adjust_permalink"], 1, 2);
