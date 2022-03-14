@@ -1,0 +1,12 @@
+// Adjust permalink to /network/{role}/
+function adjust_permalink($post_link, $post)
+{
+    if (is_object($post) && $post->post_type == 'network') :
+        $terms = wp_get_object_terms($post->ID, 'role');
+        if ($terms) :
+            return str_replace('%role%', $terms[0]->slug, $post_link);
+        endif;
+    endif;
+
+    return $post_link;
+}
