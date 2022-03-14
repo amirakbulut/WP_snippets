@@ -1,0 +1,27 @@
+jQuery(function() {
+    var catfield = document.querySelectorAll('#rolechecklist input');
+
+    // Loop to only allow 1 choice
+    catfield.forEach((item)=>{
+        item.addEventListener('change', function() {
+    
+            // on check, uncheck others
+            if(this.checked){
+                document.querySelectorAll('#rolechecklist input:checked').forEach(i => (i.checked = false) );
+                this.checked = true;
+            }
+            
+            // get current checked value
+            var checked_value = this.parentElement.textContent.replace(/\s/g, "");
+    
+            var display_languages = 'block';
+
+            // Hide Language taxonomy if checked item isn't "Expert"
+            if (this.checked && checked_value !== "Expert") {
+                display_languages = 'none';
+            }
+    
+            document.querySelector('#expert_languagediv').style.display = display_languages;
+        });
+    })
+})
