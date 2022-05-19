@@ -1,0 +1,13 @@
+add_filter('acf/load_value/name=flexible_content', function ($value, $post_id, $field) {
+
+	// Make sure it's not an existing post item
+	if ($value !== NULL) : return $value;
+	endif;
+
+	// Set default layout
+	$value = [
+		['acf_fc_layout' => 'LAYOUT_SLUG']
+	];
+
+	return $value;
+}, 10, 3);
