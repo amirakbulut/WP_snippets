@@ -1,0 +1,18 @@
+// To open modals
+	document
+		.querySelectorAll('.toggle-modal')
+		.forEach(element => {
+			element.addEventListener('click', (e) => {
+				let body = document.querySelector('body');
+				let modal = "visible-" + element.dataset.modal;
+
+				body.classList.forEach(classItem => {
+					if (classItem.startsWith('visible-') && classItem !== modal) {
+						body.classList.remove(classItem);
+					}
+				});
+
+				body.classList.toggle(modal);
+
+			})
+		});
