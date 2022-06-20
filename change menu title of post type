@@ -1,0 +1,8 @@
+add_action('init', function(){
+  
+  $post_type = get_post_type_object('post');
+  $post_type->menu_icon = "dashicons-admin-comments";
+  $post_type->labels->name = 'Knowledge';
+  $post_type->labels->menu_name = 'Knowledge';
+
+);
