@@ -1,0 +1,8 @@
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'wp/', '/v2/users', array(
+		'methods' => 'GET',
+		'callback' => function () {
+            return 'Silence is golden';
+        }
+	));
+});
