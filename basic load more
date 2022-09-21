@@ -1,3 +1,25 @@
+Loader css:
+@keyframes load {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+&.loading {
+    pointer-events: none;
+    border-color: black;
+  &::before {
+    content: "";
+    border: 2px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 2px solid #7BB04D;
+    width: 20px;
+    height: 20px;
+    -webkit-animation: load 1s infinite linear;
+    animation: load 1s infinite linear;
+  }
+}
+
+
 JS:
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -6,11 +28,14 @@ window.addEventListener('DOMContentLoaded', () => {
   if (loadMore_btn) {
     state.max_pages = loadMore_btn.dataset.maxPages
     loadMore_btn.addEventListener('click', async () => {
+      loadIndicator(true)
       await loadMore();
       document.querySelector('.grid').insertAdjacentHTML('beforeend', state.lastResult.html);
-      console.log(state);
+
       if (state.finished) {
         loadMore_btn.remove()
+      } else {
+        loadIndicator(false)
       }
     });
   }
@@ -48,6 +73,18 @@ async function loadMore() {
     }
   } catch (e) {
     console.log(e.message);
+  }
+}
+
+function loadIndicator(active) {
+  let loadMore_btn = document.querySelector('.load-more');
+
+  loadMore_btn.disabled = active ? true : false;
+  loadMore_btn.innerHTML = active ? '' : 'Laad meer';
+  if (active) {
+    loadMore_btn.classList.add('loading');
+  } else {
+    loadMore_btn.classList.remove('loading');
   }
 }
 
