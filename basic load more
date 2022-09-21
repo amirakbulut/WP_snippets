@@ -1,0 +1,129 @@
+JS:
+
+window.addEventListener('DOMContentLoaded', () => {
+  let loadMore_btn = document.querySelector('.load-more');
+
+  if (loadMore_btn) {
+    state.max_pages = loadMore_btn.dataset.maxPages
+    loadMore_btn.addEventListener('click', async () => {
+      await loadMore();
+      document.querySelector('.grid').insertAdjacentHTML('beforeend', state.lastResult.html);
+      console.log(state);
+      if (state.finished) {
+        loadMore_btn.remove()
+      }
+    });
+  }
+});
+
+
+let state = {
+  paged: 2,
+  ppp: 6,
+  finished: false,
+  lastResult: null
+}
+
+async function loadMore() {
+  try {
+    const formData = new FormData();
+
+    formData.append('action', "fetch_expositions");
+    formData.append('ppp', state.ppp);
+    formData.append('paged', state.paged);
+
+    const response = await fetch('/wp-admin/admin-ajax.php', {
+      body: formData,
+      method: "post"
+    });
+
+    const responseBody = await response.text();
+    state.lastResult = await JSON.parse(responseBody);
+
+    if (responseBody) {
+      state.paged++;
+      if (state.paged >= state.max_pages) {
+        state.finished = true;
+      }
+    }
+  } catch (e) {
+    console.log(e.message);
+  }
+}
+
+PHP
+
+add_action('wp_ajax_fetch_expositions', [$this, 'fetch_expositions_callback']);
+add_action('wp_ajax_nopriv_fetch_expositions', [$this, 'fetch_expositions_callback']);
+
+// fetch_expositions    
+    function fetch_expositions_callback()
+    {
+        $paged = $_POST['paged'];
+        $ppp = $_POST['ppp'];
+
+        $query_args = [
+            'post_type' => 'exposition',
+            'post_status' => 'publish',
+            // 'max_num_pages' => 1,
+            'posts_per_page' => $ppp,
+            'paged' => $paged,
+            'orderby' => 'date',
+            'order' => 'DESC',
+        ];
+
+        $query = new WP_Query($query_args);
+
+        if ($query->have_posts()) :
+            ob_start();
+            while ($query->have_posts()) :
+                $query->the_post();
+        
+                $thumbnail = get_the_post_thumbnail(null, 'byron-thumb', [
+                    'class' => 'product-img w-100 h-100'
+                ]);
+                
+                if(empty($thumbnail)):
+                    $img = get_field('fallback_img', 'option');
+                    $thumbnail = wp_get_attachment_image($img['ID'], 'byron-thumb', false, [
+                        'class' => 'product-img w-100 h-100'
+                    ]); 
+                endif;
+                
+                $link = get_the_permalink();
+                $title = get_the_title();
+                $description = mb_strimwidth(get_field('content'), 0, 160) . ".. <span class='text-secondary'>Leer meer</span>";
+                $date = get_field('date');
+
+                get_template_part('template-parts/cards/card-exposition', null, [
+                    'thumbnail' => $thumbnail,
+                    'link' => $link,
+                    'title' => $title,
+                    'description' => $description,
+                    'date' => $date
+                ]);
+
+
+            endwhile;
+
+            $output = ob_get_contents();
+            ob_end_clean();
+
+            $result = [
+                'html' => $output
+            ];
+
+            echo json_encode($result);
+            exit;
+
+            wp_reset_query();
+        else :
+            echo '<div class="g-col-12 text-center no-results">No posts found.</div>';
+        endif;
+
+        // Reset post data and stop execution of the functions.
+        wp_reset_postdata();
+        wp_reset_query();
+        wp_die();
+    }
+
