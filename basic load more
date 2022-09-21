@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 let state = {
-  paged: 2,
+  paged: 1,
   ppp: 6,
   finished: false,
   lastResult: null
@@ -55,7 +55,7 @@ async function loadMore() {
 
     formData.append('action', "fetch_expositions");
     formData.append('ppp', state.ppp);
-    formData.append('paged', state.paged);
+    formData.append('paged', state.paged + 1);
 
     const response = await fetch('/wp-admin/admin-ajax.php', {
       body: formData,
