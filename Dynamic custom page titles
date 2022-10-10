@@ -1,0 +1,3 @@
+<title>
+    <?= bloginfo('name') .  !is_home() ? (isset($args['page_title']) ? ' - ' . $args['page_title'] : ' - ' . get_the_title()) : ' - ' . "Nieuws"; ?>
+</title>
